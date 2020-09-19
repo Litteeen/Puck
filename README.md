@@ -1,5 +1,5 @@
 # Puck
-Your magical caring spirit
+Your magical watching spirit
 
 ## Installation
 1. Add this repository to your Package Manager: https://repo.litten.love
