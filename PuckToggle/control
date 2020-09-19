@@ -1,0 +1,9 @@
+Package: love.litten.pucktoggle
+Name: PuckToggle
+Depends: mobilesubstrate
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Control center toggle for puck
+Maintainer: alexandra
+Author: alexandra
+Section: Control Center (Modules)

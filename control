@@ -1,0 +1,9 @@
+Package: love.litten.puck
+Name: Puck
+Depends: mobilesubstrate, preferenceloader, ws.hbang.common (>= 1.14), firmware (>= 13.0), com.opa334.ccsupport
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Puck, your magical spirit
+Maintainer: alexandra
+Author: alexandra
+Section: Tweaks
