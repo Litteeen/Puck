@@ -38,10 +38,6 @@ BOOL allowMusicPlaybackSwitch = NO;
 - (BOOL)setPowerMode:(long long)arg1 error:(id *)arg2;
 @end
 
-@interface AVFlashlight : NSObject
-- (void)turnPowerOff;
-@end
-
 // battery percentage
 @interface SBUIController : NSObject
 - (int)batteryCapacityAsPercentage;

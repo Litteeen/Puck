@@ -28,25 +28,7 @@ BOOL enabled;
 
 %hook SBLiftToWakeController
 
-- (void)wakeGestureManager:(id)arg1 didUpdateWakeGesture:(long long)arg2 { // disable raise to wake
-
-	if (!isPuckActive)
-		%orig;
-	else
-		return;
-
-}
-
 - (void)wakeGestureManager:(id)arg1 didUpdateWakeGesture:(long long)arg2 orientation:(int)arg3 { // disable raise to wake
-
-	if (!isPuckActive)
-		%orig;
-	else
-		return;
-
-}
-
-- (void)wakeGestureManager:(id)arg1 didUpdateWakeGesture:(long long)arg2 orientation:(int)arg3 detectedAt:(unsigned long long)arg4 { // disable raise to wake
 
 	if (!isPuckActive)
 		%orig;
@@ -164,7 +146,7 @@ BOOL enabled;
 		recentlyWoke = NO;
 
 	if ([self batteryCapacityAsPercentage] == shutdownPercentageValue && ![self isOnAC] && !isPuckActive && !recentlyWoke)
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckCallNotification" object:nil];
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
 
 	if ([self batteryCapacityAsPercentage] == wakePercentageValue && [self isOnAC] && isPuckActive)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
@@ -190,7 +172,7 @@ BOOL enabled;
 
 	recentlyWoke = YES;
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckCallNotification" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckShutdownNotification" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckWakeNotification" object:nil];
 
 }
@@ -198,7 +180,7 @@ BOOL enabled;
 %new
 - (void)receivePuckNotification:(NSNotification *)notification {
 
-	if ([notification.name isEqual:@"puckCallNotification"]) { // shutdown
+	if ([notification.name isEqual:@"puckShutdownNotification"]) { // shutdown
 		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 		[springboard _simulateLockButtonPress]; // lock device
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES]; // enable airplane mode

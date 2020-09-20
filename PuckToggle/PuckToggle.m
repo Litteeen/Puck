@@ -27,7 +27,7 @@
   [super refreshState];
 
   if (_selected) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"puckCallNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
   }
 
 }
