@@ -211,9 +211,9 @@ BOOL enabled;
 			posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const *)args, NULL);
 		}
 	} else if ([notification.name isEqual:@"puckWakeNotification"]) { // wake
-		isPuckActive = NO;
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO]; // disable airplane mode
 		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil]; // disable low power mode
+		isPuckActive = NO;
 
 		pid_t pid;
 		const char* args[] = {"killall", "backboardd", NULL};
@@ -232,10 +232,13 @@ BOOL enabled;
 
 	[preferences registerBool:&enabled default:NO forKey:@"Enabled"];
 
-	[preferences registerInteger:&shutdownPercentageValue default:5 forKey:@"shutdownPercentage"];
+	// Behavior
+	[preferences registerInteger:&shutdownPercentageValue default:7 forKey:@"shutdownPercentage"];
 	[preferences registerInteger:&wakePercentageValue default:10 forKey:@"wakePercentage"];
 	[preferences registerBool:&wakeWithVolumeButtonSwitch default:YES forKey:@"wakeWithVolumeButton"];
 	[preferences registerBool:&wakeWhenPluggedInSwitch default:NO forKey:@"wakeWhenPluggedIn"];
+
+	// Miscellaneous
 	[preferences registerBool:&allowMusicPlaybackSwitch default:NO forKey:@"allowMusicPlayback"];
 
 	if (enabled) {

@@ -11,10 +11,13 @@ int volumeUpPresses = 0;
 
 extern BOOL enabled;
 
-NSInteger shutdownPercentageValue = 5;
+// behavior
+NSInteger shutdownPercentageValue = 7;
 NSInteger wakePercentageValue = 10;
 BOOL wakeWithVolumeButtonSwitch = YES;
 BOOL wakeWhenPluggedInSwitch = NO;
+
+// miscellaneous
 BOOL allowMusicPlaybackSwitch = NO;
 
 // device locking

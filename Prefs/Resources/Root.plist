@@ -36,7 +36,7 @@
 			<key>cell</key>
 			<string>PSSliderCell</string>
 			<key>default</key>
-			<integer>5</integer>
+			<integer>7</integer>
 			<key>defaults</key>
 			<string>love.litten.puckpreferences</string>
 			<key>key</key>
