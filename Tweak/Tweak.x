@@ -149,18 +149,18 @@ BOOL enabled;
 
 %end
 
-// %hook SBBacklightController
+%hook SBBacklightController
 
-// - (void)turnOnScreenFullyWithBacklightSource:(long long)arg1 { // prevent display from turning on
+- (void)turnOnScreenFullyWithBacklightSource:(long long)arg1 { // prevent display from turning on
 
-// 	if (!isPuckActive)
-// 		%orig;
-// 	else
-// 		return;
+	if (!isPuckActive)
+		%orig;
+	else
+		return;
 
-// }
+}
 
-// %end
+%end
 
 %hook SBVolumeControl
 
