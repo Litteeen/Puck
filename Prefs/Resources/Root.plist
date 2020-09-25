@@ -110,7 +110,7 @@
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<true/>
+			<false/>
 			<key>defaults</key>
 			<string>love.litten.puckpreferences</string>
 			<key>key</key>
@@ -125,19 +125,33 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Miscellaneous</string>
+			<string>Music</string>
 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<false/>
+			<true/>
 			<key>defaults</key>
 			<string>love.litten.puckpreferences</string>
 			<key>key</key>
 			<string>allowMusicPlayback</string>
 			<key>label</key>
 			<string>Allow Music Playback</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>allowVolumeChanges</string>
+			<key>label</key>
+			<string>Allow Volume Changes</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>

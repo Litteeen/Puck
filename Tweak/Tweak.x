@@ -41,7 +41,7 @@ BOOL enabled;
 
 %hook SBSleepWakeHardwareButtonInteraction
 
-- (void)_performWake { // disable sleep button wake
+- (void)_performWake { // disable sleep button
 
 	if (!isPuckActive)
 		%orig;
@@ -50,7 +50,7 @@ BOOL enabled;
 
 }
 
-- (void)_performSleep { // disable sleep button sleep
+- (void)_performSleep { // disable sleep button
 
 	if (!isPuckActive)
 		%orig;
@@ -63,7 +63,7 @@ BOOL enabled;
 
 %hook SBLockHardwareButtonActions
 
-- (BOOL)disallowsSinglePressForReason:(id*)arg1 {
+- (BOOL)disallowsSinglePressForReason:(id*)arg1 { // disable sleep button
 
 	if (!isPuckActive)
 		return %orig;
@@ -72,7 +72,7 @@ BOOL enabled;
 
 }
 
-- (BOOL)disallowsDoublePressForReason:(id *)arg1 {
+- (BOOL)disallowsDoublePressForReason:(id *)arg1 { // disable sleep button
 
 	if (!isPuckActive)
 		return %orig;
@@ -81,7 +81,7 @@ BOOL enabled;
 
 }
 
-- (BOOL)disallowsTriplePressForReason:(id*)arg1 {
+- (BOOL)disallowsTriplePressForReason:(id*)arg1 { // disable sleep button
 
 	if (!isPuckActive)
 		return %orig;
@@ -90,7 +90,7 @@ BOOL enabled;
 
 }
 
-- (BOOL)disallowsLongPressForReason:(id*)arg1 {
+- (BOOL)disallowsLongPressForReason:(id*)arg1 { // disable sleep button
 
 	if (!isPuckActive)
 		return %orig;
@@ -113,6 +113,19 @@ BOOL enabled;
 }
 
 - (void)singlePressUp:(id)arg1 { // disable home button
+
+	if (!isPuckActive)
+		%orig;
+	else
+		return;
+
+}
+
+%end
+
+%hook SBHomeHardwareButtonActions
+
+- (void)performLongPressActions { // disable home button
 
 	if (!isPuckActive)
 		%orig;
@@ -151,9 +164,9 @@ BOOL enabled;
 
 %hook SBVolumeControl
 
-- (void)increaseVolume { // respring after three volume up steps when active
+- (void)increaseVolume { // wake after three volume up steps when active
 
-	%orig;
+	if (!isPuckActive || (isPuckActive && allowVolumeChangesSwitch)) %orig;
 
 	if (!isPuckActive || !wakeWithVolumeButtonSwitch) return;
 	timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(resetPresses) userInfo:nil repeats:NO];
@@ -162,6 +175,12 @@ BOOL enabled;
 	volumeUpPresses += 1;
 	if (volumeUpPresses == 3)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
+
+}
+
+- (void)decreaseVolume {
+
+	if (!isPuckActive || (isPuckActive && allowVolumeChangesSwitch)) %orig;
 
 }
 
@@ -266,10 +285,11 @@ BOOL enabled;
 	[preferences registerInteger:&wakePercentageValue default:10 forKey:@"wakePercentage"];
 	[preferences registerBool:&wakeWithVolumeButtonSwitch default:YES forKey:@"wakeWithVolumeButton"];
 	[preferences registerBool:&wakeWhenPluggedInSwitch default:NO forKey:@"wakeWhenPluggedIn"];
-	[preferences registerBool:&respringOnWakeSwitch default:YES forKey:@"respringOnWake"];
+	[preferences registerBool:&respringOnWakeSwitch default:NO forKey:@"respringOnWake"];
 
-	// Miscellaneous
-	[preferences registerBool:&allowMusicPlaybackSwitch default:NO forKey:@"allowMusicPlayback"];
+	// Music
+	[preferences registerBool:&allowMusicPlaybackSwitch default:YES forKey:@"allowMusicPlayback"];
+	[preferences registerBool:&allowVolumeChangesSwitch default:YES forKey:@"allowVolumeChanges"];
 
 	if (enabled) {
 		%init(Puck);
