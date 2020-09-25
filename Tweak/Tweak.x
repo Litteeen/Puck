@@ -157,7 +157,7 @@ BOOL enabled;
 
 	%orig;
 
-	if (wakeWhenPluggedInSwitch && isPuckActive && [self isOnAC])
+	if (wakeWhenPluggedInSwitch && [self isOnAC] && isPuckActive)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
 
 }
@@ -196,10 +196,17 @@ BOOL enabled;
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO]; // disable airplane mode
 		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil]; // disable low power mode
 		isPuckActive = NO;
-
-		pid_t pid;
-		const char* args[] = {"killall", "backboardd", NULL};
-		posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const *)args, NULL);
+		
+		if (!respringOnWakeSwitch) {
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+				SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
+				[springboard _simulateHomeButtonPress];
+			});
+		} else {
+			pid_t pid;
+			const char* args[] = {"killall", "backboardd", NULL};
+			posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const *)args, NULL);
+		}
 	}
 
 }
@@ -219,6 +226,7 @@ BOOL enabled;
 	[preferences registerInteger:&wakePercentageValue default:10 forKey:@"wakePercentage"];
 	[preferences registerBool:&wakeWithVolumeButtonSwitch default:YES forKey:@"wakeWithVolumeButton"];
 	[preferences registerBool:&wakeWhenPluggedInSwitch default:NO forKey:@"wakeWhenPluggedIn"];
+	[preferences registerBool:&respringOnWakeSwitch default:YES forKey:@"respringOnWake"];
 
 	// Miscellaneous
 	[preferences registerBool:&allowMusicPlaybackSwitch default:NO forKey:@"allowMusicPlayback"];

@@ -10,7 +10,7 @@
 
 - (UIColor *)selectedColor {
 
-	return [UIColor blueColor];
+	return [UIColor clearColor];
 
 }
 
@@ -28,6 +28,7 @@
 
   if (_selected) {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
+    [self setSelected:NO];
   }
 
 }

@@ -106,6 +106,20 @@
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>respringOnWake</string>
+			<key>label</key>
+			<string>Respring On Wake</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
 
 		<dict>
 			<key>cell</key>
@@ -123,7 +137,7 @@
 			<key>key</key>
 			<string>allowMusicPlayback</string>
 			<key>label</key>
-			<string>Allow Music Playback On Speaker</string>
+			<string>Allow Music Playback</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>

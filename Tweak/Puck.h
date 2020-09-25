@@ -16,6 +16,7 @@ NSInteger shutdownPercentageValue = 7;
 NSInteger wakePercentageValue = 10;
 BOOL wakeWithVolumeButtonSwitch = YES;
 BOOL wakeWhenPluggedInSwitch = NO;
+BOOL respringOnWakeSwitch = YES;
 
 // miscellaneous
 BOOL allowMusicPlaybackSwitch = NO;
@@ -23,6 +24,7 @@ BOOL allowMusicPlaybackSwitch = NO;
 // device locking
 @interface SpringBoard : UIApplication
 - (void)_simulateLockButtonPress;
+- (void)_simulateHomeButtonPress;
 - (void)receivePuckNotification:(NSNotification *)notification;
 @end
 
