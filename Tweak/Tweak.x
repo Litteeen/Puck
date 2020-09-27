@@ -261,7 +261,7 @@ void PCKWarningNotification() {
 
 %hook TUCall
 
-- (int)status { // check if user is currently in call
+- (int)status { // check if user is currently in a call
 
 	if (%orig == 1)
 		isInCall = YES;
