@@ -2,7 +2,7 @@
 
 BOOL enabled;
 
-// warning notifications
+// warning notification
 static BBServer* bbServer = nil;
 
 static dispatch_queue_t getBBServerQueue() {

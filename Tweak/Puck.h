@@ -28,7 +28,7 @@ BOOL allowVolumeChangesSwitch = YES;
 BOOL warningNotificationSwitch = YES;
 NSInteger warningPercentageValue = 10;
 
-// device locking
+// device locking and waking
 @interface SpringBoard : UIApplication
 - (void)_simulateLockButtonPress;
 - (void)_simulateHomeButtonPress;
@@ -47,13 +47,13 @@ NSInteger warningPercentageValue = 10;
 - (BOOL)setPowerMode:(long long)arg1 error:(id *)arg2;
 @end
 
-// battery percentage
+// battery state
 @interface SBUIController : NSObject
 - (int)batteryCapacityAsPercentage;
 - (BOOL)isOnAC;
 @end
 
-// warning notifications
+// warning notification
 @interface BBAction : NSObject
 + (id)actionWithLaunchBundleID:(id)arg1 callblock:(id)arg2;
 @end
