@@ -29,6 +29,10 @@ BOOL allowVolumeChangesSwitch = YES;
 BOOL warningNotificationSwitch = YES;
 NSInteger warningPercentageValue = 10;
 
+// calls
+BOOL allowCallsSwitch = YES;
+BOOL shutdownAfterCallEndedSwitch = YES;
+
 // device locking and waking
 @interface SpringBoard : UIApplication
 - (void)_simulateLockButtonPress;
@@ -50,6 +54,7 @@ NSInteger warningPercentageValue = 10;
 
 // battery state
 @interface SBUIController : NSObject
++ (id)sharedInstance;
 - (int)batteryCapacityAsPercentage;
 - (BOOL)isOnAC;
 @end

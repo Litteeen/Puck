@@ -263,10 +263,13 @@ void PCKWarningNotification() {
 
 - (int)status { // check if user is currently in a call
 
-	if (%orig == 1)
+	if (%orig == 1 && allowCallsSwitch)
 		isInCall = YES;
 	else
 		isInCall = NO;
+
+	if (%orig == 6 && shutdownAfterCallEndedSwitch && [[%c(SBUIController) sharedInstance] batteryCapacityAsPercentage] == shutdownPercentageValue && !isPuckActive)
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
 
 	return %orig;
 
@@ -414,6 +417,10 @@ void PCKWarningNotification() {
 	// Warning Notification
 	[preferences registerBool:&warningNotificationSwitch default:YES forKey:@"warningNotification"];
 	[preferences registerInteger:&warningPercentageValue default:10 forKey:@"warningPercentage"];
+
+	// Calls
+	[preferences registerBool:&allowCallsSwitch default:YES forKey:@"allowCalls"];
+	[preferences registerBool:&shutdownAfterCallEndedSwitch default:YES forKey:@"shutdownAfterCallEnded"];
 
 	if (enabled) {
 		%init(Puck);
