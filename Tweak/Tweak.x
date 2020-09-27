@@ -259,6 +259,21 @@ void PCKWarningNotification() {
 
 %end
 
+%hook TUCall
+
+- (int)status { // check if user is currently in call
+
+	if (%orig == 1)
+		isInCall = YES;
+	else
+		isInCall = NO;
+
+	return %orig;
+
+}
+
+%end
+
 %hook SBUIController
 
 - (void)updateBatteryState:(id)arg1 { // automatic shutdown, wake & warning notification
@@ -271,13 +286,13 @@ void PCKWarningNotification() {
 	if ([self batteryCapacityAsPercentage] > warningPercentageValue)
 		recentlyWarned = NO;
 
-	if ([self batteryCapacityAsPercentage] == shutdownPercentageValue && ![self isOnAC] && !isPuckActive && !recentlyWoke)
+	if ([self batteryCapacityAsPercentage] == shutdownPercentageValue && ![self isOnAC] && !recentlyWoke && !isInCall && !isPuckActive)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
 
 	if ([self batteryCapacityAsPercentage] == wakePercentageValue && [self isOnAC] && isPuckActive)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
 
-	if (warningNotificationSwitch && [self batteryCapacityAsPercentage] == warningPercentageValue && ![self isOnAC] && !recentlyWarned && !isPuckActive) {
+	if (warningNotificationSwitch && [self batteryCapacityAsPercentage] == warningPercentageValue && ![self isOnAC] && !recentlyWarned && !isInCall && !isPuckActive) {
 		PCKWarningNotification();
 		recentlyWarned = YES;
 	}

@@ -8,6 +8,7 @@ HBPreferences* preferences;
 BOOL isPuckActive = NO;
 BOOL recentlyWoke = NO;
 BOOL recentlyWarned = NO;
+BOOL isInCall = NO;
 NSTimer* timer = nil;
 int volumeUpPresses = 0;
 
