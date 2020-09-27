@@ -17,7 +17,7 @@ UIImage* currentArtwork;
         PCKAppearanceSettings* appearanceSettings = [[PCKAppearanceSettings alloc] init];
         self.hb_appearanceSettings = appearanceSettings;
         self.enableSwitch = [[UISwitch alloc] init];
-        self.enableSwitch.onTintColor = [UIColor colorWithRed: 0.68 green: 0.87 blue: 0.85 alpha: 1.00];
+        self.enableSwitch.onTintColor = [UIColor colorWithRed: 0.04 green: 0.26 blue: 0.34 alpha: 1.00];
         [self.enableSwitch addTarget:self action:@selector(toggleState) forControlEvents:UIControlEventTouchUpInside];
         UIBarButtonItem* switchy = [[UIBarButtonItem alloc] initWithCustomView: self.enableSwitch];
         self.navigationItem.rightBarButtonItem = switchy;
@@ -101,7 +101,7 @@ UIImage* currentArtwork;
     CGRect frame = self.table.bounds;
     frame.origin.y = -frame.size.height;
 
-    self.navigationController.navigationController.navigationBar.barTintColor = [UIColor colorWithRed: 0.86 green: 0.86 blue: 0.84 alpha: 1.00];
+    self.navigationController.navigationController.navigationBar.barTintColor = [UIColor colorWithRed: 0.24 green: 0.70 blue: 0.71 alpha: 1.00];
     [self.navigationController.navigationController.navigationBar setShadowImage: [UIImage new]];
     self.navigationController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationController.navigationBar.translucent = YES;
