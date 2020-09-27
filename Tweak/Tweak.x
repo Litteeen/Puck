@@ -268,7 +268,7 @@ void PCKWarningNotification() {
 	else
 		isInCall = NO;
 
-	if (%orig == 6 && shutdownAfterCallEndedSwitch && [[%c(SBUIController) sharedInstance] batteryCapacityAsPercentage] == shutdownPercentageValue && !isPuckActive)
+	if (%orig == 6 && shutdownAfterCallEndedSwitch && [[%c(SBUIController) sharedInstance] batteryCapacityAsPercentage] <= shutdownPercentageValue && !isPuckActive)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
 
 	return %orig;
