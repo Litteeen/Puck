@@ -281,7 +281,7 @@
 			<key>label</key>
 			<string>Koi</string>
 			<key>subtitle</key>
-			<string>Colored 3d touch menus based on app icon</string>
+			<string>3D touch menu color based on app icon</string>
 			<key>icon</key>
 			<string>Koi.png</string>
 			<key>url</key>
