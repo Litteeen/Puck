@@ -66,6 +66,12 @@ void PCKWarningNotification() {
 
 }
 
+void PuckActivatorShutdown() {
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
+
+}
+
 %group Puck
 
 %hook SBTapToWakeController
@@ -322,6 +328,7 @@ void PCKWarningNotification() {
 	recentlyWoke = YES;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckShutdownNotification" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckWakeNotification" object:nil];
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)LTOpenNotification, NULL, kNilOptions);
 
 }
 

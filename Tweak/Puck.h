@@ -3,6 +3,8 @@
 #import <spawn.h>
 #import <dlfcn.h>
 
+#define LTOpenNotification @"love.litten.puck/Shutdown"
+
 HBPreferences* preferences;
 
 BOOL isPuckActive = NO;
