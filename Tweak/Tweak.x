@@ -269,15 +269,17 @@ void PuckActivatorShutdown() {
 
 - (int)status { // check if user is currently in a call & shutdown after call ended
 
-	if (%orig == 1 && allowCallsSwitch)
+	int status = %orig;
+
+	if (status == 1 && allowCallsSwitch)
 		isInCall = YES;
 	else
 		isInCall = NO;
 
-	if (%orig == 6 && shutdownAfterCallEndedSwitch && [[%c(SBUIController) sharedInstance] batteryCapacityAsPercentage] <= shutdownPercentageValue && !isPuckActive)
+	if (status == 6 && shutdownAfterCallEndedSwitch && [[%c(SBUIController) sharedInstance] batteryCapacityAsPercentage] <= shutdownPercentageValue && !isPuckActive)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
 
-	return %orig;
+	return status;
 
 }
 
@@ -413,7 +415,7 @@ void PuckActivatorShutdown() {
 	[preferences registerInteger:&shutdownPercentageValue default:7 forKey:@"shutdownPercentage"];
 	[preferences registerInteger:&wakePercentageValue default:10 forKey:@"wakePercentage"];
 	[preferences registerBool:&wakeWithVolumeButtonSwitch default:YES forKey:@"wakeWithVolumeButton"];
-	[preferences registerBool:&wakeWhenPluggedInSwitch default:NO forKey:@"wakeWhenPluggedIn"];
+	[preferences registerBool:&wakeWhenPluggedInSwitch default:YES forKey:@"wakeWhenPluggedIn"];
 	[preferences registerBool:&respringOnWakeSwitch default:NO forKey:@"respringOnWake"];
 
 	// Music

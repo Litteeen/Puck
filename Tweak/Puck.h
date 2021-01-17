@@ -20,7 +20,7 @@ extern BOOL enabled;
 NSInteger shutdownPercentageValue = 7;
 NSInteger wakePercentageValue = 10;
 BOOL wakeWithVolumeButtonSwitch = YES;
-BOOL wakeWhenPluggedInSwitch = NO;
+BOOL wakeWhenPluggedInSwitch = YES;
 BOOL respringOnWakeSwitch = NO;
 
 // music
