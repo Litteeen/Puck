@@ -2,6 +2,8 @@
 
 BOOL enabled;
 
+AVFlashlight* flashlight;
+
 // warning notification
 static BBServer* bbServer = nil;
 
@@ -248,9 +250,21 @@ void PuckActivatorShutdown() {
 
 }
 
-- (void)decreaseVolume {
+- (void)decreaseVolume { // other gestures when pressing volume down
 
 	if (!isPuckActive || (isPuckActive && allowVolumeChangesSwitch)) %orig;
+
+	if (isPuckActive) {
+		if (toggleFlashlightSwitch) {
+			if ([flashlight flashlightLevel] == 0)
+				[flashlight setFlashlightLevel:1 withError:nil];
+			else
+				[flashlight setFlashlightLevel:0 withError:nil];
+		}
+		if (playPauseMediaSwitch && allowMusicPlaybackSwitch) {
+			[[%c(SBMediaController) sharedInstance] togglePlayPauseForEventSource:0];
+		}
+	}
 
 }
 
@@ -411,28 +425,33 @@ void PuckActivatorShutdown() {
 
 	[preferences registerBool:&enabled default:NO forKey:@"Enabled"];
 
-	// Behavior
+	// behavior
 	[preferences registerInteger:&shutdownPercentageValue default:7 forKey:@"shutdownPercentage"];
 	[preferences registerInteger:&wakePercentageValue default:10 forKey:@"wakePercentage"];
 	[preferences registerBool:&wakeWithVolumeButtonSwitch default:YES forKey:@"wakeWithVolumeButton"];
 	[preferences registerBool:&wakeWhenPluggedInSwitch default:YES forKey:@"wakeWhenPluggedIn"];
 	[preferences registerBool:&respringOnWakeSwitch default:NO forKey:@"respringOnWake"];
 
-	// Music
+	// music
 	[preferences registerBool:&allowMusicPlaybackSwitch default:YES forKey:@"allowMusicPlayback"];
 	[preferences registerBool:&allowVolumeChangesSwitch default:YES forKey:@"allowVolumeChanges"];
 
-	// Warning Notification
+	// warning notification
 	[preferences registerBool:&warningNotificationSwitch default:YES forKey:@"warningNotification"];
 	[preferences registerInteger:&warningPercentageValue default:10 forKey:@"warningPercentage"];
 
-	// Calls
+	// calls
 	[preferences registerBool:&allowCallsSwitch default:YES forKey:@"allowCalls"];
 	[preferences registerBool:&shutdownAfterCallEndedSwitch default:YES forKey:@"shutdownAfterCallEnded"];
+
+	// other gestures
+	[preferences registerBool:&toggleFlashlightSwitch default:NO forKey:@"toggleFlashlight"];
+	[preferences registerBool:&playPauseMediaSwitch default:NO forKey:@"playPauseMedia"];
 
 	if (enabled) {
 		%init(Puck);
 		if (warningNotificationSwitch) %init(WarningNotification);
+		if (toggleFlashlightSwitch) flashlight = [[%c(AVFlashlight) alloc] init];
 	}
 	
 }

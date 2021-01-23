@@ -35,6 +35,10 @@ NSInteger warningPercentageValue = 10;
 BOOL allowCallsSwitch = YES;
 BOOL shutdownAfterCallEndedSwitch = YES;
 
+// other gestures
+BOOL toggleFlashlightSwitch = NO;
+BOOL playPauseMediaSwitch = NO;
+
 // device locking and waking
 @interface SpringBoard : UIApplication
 - (void)_simulateLockButtonPress;
@@ -52,6 +56,16 @@ BOOL shutdownAfterCallEndedSwitch = YES;
 @interface _CDBatterySaver : NSObject
 + (id)sharedInstance;
 - (BOOL)setPowerMode:(long long)arg1 error:(id *)arg2;
+@end
+
+@interface AVFlashlight : NSObject
+- (float)flashlightLevel;
+- (BOOL)setFlashlightLevel:(float)arg1 withError:(id *)arg2;
+@end
+
+@interface SBMediaController : NSObject
++ (id)sharedInstance;
+- (BOOL)togglePlayPauseForEventSource:(long long)arg1;
 @end
 
 // battery state
