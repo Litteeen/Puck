@@ -7,14 +7,16 @@
 
 HBPreferences* preferences;
 
+extern BOOL enabled;
+
 BOOL isPuckActive = NO;
 BOOL recentlyWoke = NO;
 BOOL recentlyWarned = NO;
 BOOL isInCall = NO;
 NSTimer* timer = nil;
 int volumeUpPresses = 0;
-
-extern BOOL enabled;
+BOOL deviceHasFlashlight = NO;
+BOOL flashLightAvailable = NO;
 
 // behavior
 NSInteger shutdownPercentageValue = 7;
@@ -34,6 +36,12 @@ NSInteger warningPercentageValue = 10;
 // calls
 BOOL allowCallsSwitch = YES;
 BOOL shutdownAfterCallEndedSwitch = YES;
+
+// alarms
+BOOL wakeWhenAlarmFiresSwitch = YES;
+
+// flashlight
+BOOL turnFlashlightOffSwitch = YES;
 
 // other gestures
 BOOL toggleFlashlightSwitch = NO;

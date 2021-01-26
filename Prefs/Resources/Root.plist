@@ -250,6 +250,48 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
+			<string>Alarms</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>wakeWhenAlarmFires</string>
+			<key>label</key>
+			<string>Wake When Alarm Fires</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
+		
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Flashlight</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>turnFlashlightOff</string>
+			<key>label</key>
+			<string>Turn Flashlight Off</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
 			<string>Volume Down Gestures</string>
 		</dict>
 		<dict>

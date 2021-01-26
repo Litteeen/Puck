@@ -256,6 +256,7 @@ void PuckActivatorShutdown() {
 
 	if (isPuckActive) {
 		if (toggleFlashlightSwitch) {
+			if (deviceHasFlashlight && flashLightAvailable && !flashlight && (turnFlashlightOffSwitch || toggleFlashlightSwitch)) flashlight = [[%c(AVFlashlight) alloc] init];
 			if ([flashlight flashlightLevel] == 0)
 				[flashlight setFlashlightLevel:1 withError:nil];
 			else
@@ -335,6 +336,43 @@ void PuckActivatorShutdown() {
 
 %end
 
+%hook CSModalButton
+
+- (void)didMoveToWindow { // disable puck when alarm fires
+
+	%orig;
+
+	if (!wakeWhenAlarmFiresSwitch) return;
+
+	[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
+	[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
+	isPuckActive = NO;
+	recentlyWoke = YES;
+
+}
+
+%end
+
+%hook AVFlashlight
+
++ (BOOL)hasFlashlight { // detect if device has a flashlight
+
+	deviceHasFlashlight = %orig;
+
+	return deviceHasFlashlight;
+
+}
+
+- (BOOL)isAvailable { // detect if flashlight is available
+
+	flashLightAvailable = %orig;
+
+	return flashLightAvailable;
+
+}
+
+%end
+
 %hook SpringBoard
 
 - (void)applicationDidFinishLaunching:(id)arg1 { // register puck notifications
@@ -344,28 +382,30 @@ void PuckActivatorShutdown() {
 	recentlyWoke = YES;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckShutdownNotification" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckWakeNotification" object:nil];
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)LTOpenNotification, NULL, kNilOptions);
+	if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Activator.plist"]) CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)LTOpenNotification, NULL, kNilOptions);
 
 }
 
 %new
 - (void)receivePuckNotification:(NSNotification *)notification {
 
-	if ([notification.name isEqual:@"puckShutdownNotification"]) { // shutdown
+	if ([notification.name isEqual:@"puckShutdownNotification"]) {
 		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 		[springboard _simulateLockButtonPress]; // lock device
-		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES]; // enable airplane mode
-		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil]; // enable low power mode
+		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES];
+		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
+		if (deviceHasFlashlight && flashLightAvailable && !flashlight && (turnFlashlightOffSwitch || toggleFlashlightSwitch)) flashlight = [[%c(AVFlashlight) alloc] init];
+		if (turnFlashlightOffSwitch) [flashlight setFlashlightLevel:0 withError:nil];
 		isPuckActive = YES;
 
-		if (!allowMusicPlaybackSwitch) { // stop music
+		if (!allowMusicPlaybackSwitch) {
 			pid_t pid;
 			const char* args[] = {"killall", "mediaserverd", NULL};
 			posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const *)args, NULL);
 		}
-	} else if ([notification.name isEqual:@"puckWakeNotification"]) { // wake
-		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO]; // disable airplane mode
-		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil]; // disable low power mode
+	} else if ([notification.name isEqual:@"puckWakeNotification"]) {
+		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
+		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
 		isPuckActive = NO;
 		recentlyWoke = YES;
 		
@@ -444,6 +484,12 @@ void PuckActivatorShutdown() {
 	[preferences registerBool:&allowCallsSwitch default:YES forKey:@"allowCalls"];
 	[preferences registerBool:&shutdownAfterCallEndedSwitch default:YES forKey:@"shutdownAfterCallEnded"];
 
+	// alarms
+	[preferences registerBool:&wakeWhenAlarmFiresSwitch default:YES forKey:@"wakeWhenAlarmFires"];
+	
+	// flashlight
+	[preferences registerBool:&turnFlashlightOffSwitch default:YES forKey:@"turnFlashlightOff"];
+
 	// other gestures
 	[preferences registerBool:&toggleFlashlightSwitch default:NO forKey:@"toggleFlashlight"];
 	[preferences registerBool:&playPauseMediaSwitch default:NO forKey:@"playPauseMedia"];
@@ -451,7 +497,6 @@ void PuckActivatorShutdown() {
 	if (enabled) {
 		%init(Puck);
 		if (warningNotificationSwitch) %init(WarningNotification);
-		if (toggleFlashlightSwitch) flashlight = [[%c(AVFlashlight) alloc] init];
 	}
 	
 }
