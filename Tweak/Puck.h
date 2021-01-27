@@ -47,20 +47,17 @@ BOOL turnFlashlightOffSwitch = YES;
 BOOL toggleFlashlightSwitch = NO;
 BOOL playPauseMediaSwitch = NO;
 
-// device locking and waking
 @interface SpringBoard : UIApplication
 - (void)_simulateLockButtonPress;
 - (void)_simulateHomeButtonPress;
 - (void)receivePuckNotification:(NSNotification *)notification;
 @end
 
-// airplane mode
 @interface SBAirplaneModeController : NSObject
 + (id)sharedInstance;
 - (void)setInAirplaneMode:(BOOL)arg1;
 @end
 
-// low power mode
 @interface _CDBatterySaver : NSObject
 + (id)sharedInstance;
 - (BOOL)setPowerMode:(long long)arg1 error:(id *)arg2;
@@ -76,14 +73,12 @@ BOOL playPauseMediaSwitch = NO;
 - (BOOL)togglePlayPauseForEventSource:(long long)arg1;
 @end
 
-// battery state
 @interface SBUIController : NSObject
 + (id)sharedInstance;
 - (int)batteryCapacityAsPercentage;
 - (BOOL)isOnAC;
 @end
 
-// warning notification
 @interface BBAction : NSObject
 + (id)actionWithLaunchBundleID:(id)arg1 callblock:(id)arg2;
 @end

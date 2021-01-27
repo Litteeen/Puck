@@ -391,7 +391,7 @@ void PuckActivatorShutdown() {
 
 	if ([notification.name isEqual:@"puckShutdownNotification"]) {
 		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
-		[springboard _simulateLockButtonPress]; // lock device
+		[springboard _simulateLockButtonPress];
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES];
 		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
 		if (deviceHasFlashlight && flashLightAvailable && !flashlight && (turnFlashlightOffSwitch || toggleFlashlightSwitch)) flashlight = [[%c(AVFlashlight) alloc] init];

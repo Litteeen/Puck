@@ -124,6 +124,20 @@
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>showPuckBeforeShutdown</string>
+			<key>label</key>
+			<string>Show Puck Before Shutdown</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
 
 		<dict>
 			<key>cell</key>
