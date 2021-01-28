@@ -1,5 +1,3 @@
-[![puck header](https://github.com/Litteeen/Puck/blob/master/Prefs/Resources/Banner.png)](https://repo.litten.love)
-
 # Puck
 Your magical watching spirit
 
