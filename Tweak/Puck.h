@@ -1,7 +1,6 @@
-#import <UIKit/UIKit.h>
-#import <Cephei/HBPreferences.h>
 #import <spawn.h>
 #import <dlfcn.h>
+#import <Cephei/HBPreferences.h>
 
 #define LTOpenNotification @"love.litten.puck/Shutdown"
 
