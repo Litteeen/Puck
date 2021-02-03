@@ -400,27 +400,23 @@ void PuckActivatorWake() {
 
 	if ([notification.name isEqual:@"puckShutdownNotification"]) {
 		if (isPuckActive) return;
-		isPuckActive = YES;
 		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 		[springboard _simulateLockButtonPress];
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES];
 		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
 		if (deviceHasFlashlight && flashLightAvailable && !flashlight && (turnFlashlightOffSwitch || toggleFlashlightSwitch)) flashlight = [[%c(AVFlashlight) alloc] init];
 		if (turnFlashlightOffSwitch) [flashlight setFlashlightLevel:0 withError:nil];
-
 		if (!allowMusicPlaybackSwitch) {
 			NSTask* task = [[NSTask alloc] init];
 			[task setLaunchPath:@"/usr/bin/killall"];
 			[task setArguments:[NSArray arrayWithObjects:@"mediaserverd", nil]];
 			[task launch];
 		}
+		isPuckActive = YES;
 	} else if ([notification.name isEqual:@"puckWakeNotification"]) {
 		if (!isPuckActive) return;
-		isPuckActive = NO;
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
 		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
-		recentlyWoke = YES;
-		
 		if (!respringOnWakeSwitch) {
 			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 				SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
@@ -432,6 +428,8 @@ void PuckActivatorWake() {
 			[task setArguments:[NSArray arrayWithObjects:@"backboardd", nil]];
 			[task launch];
 		}
+		isPuckActive = NO;
+		recentlyWoke = YES;
 	}
 
 }
