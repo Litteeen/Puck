@@ -4,7 +4,7 @@ export SYSROOT = $(THEOS)/sdks/iPhoneOS13.5.sdk/
 export PREFIX = $(THEOS)/toolchain/Xcode.xctoolchain/usr/bin/
 
 INSTALL_TARGET_PROCESSES = SpringBoard
-SUBPROJECTS += Tweak Prefs PuckToggle PuckActivator
+SUBPROJECTS += Tweak Prefs PuckToggle PuckActivator/ShutdownAction/ PuckActivator/WakeAction/
 
 include $(THEOS)/makefiles/common.mk
 include $(THEOS_MAKE_PATH)/aggregate.mk

@@ -74,6 +74,12 @@ void PuckActivatorShutdown() {
 
 }
 
+void PuckActivatorWake() {
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
+
+}
+
 %group Puck
 
 %hook SBTapToWakeController
@@ -382,7 +388,10 @@ void PuckActivatorShutdown() {
 	recentlyWoke = YES;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckShutdownNotification" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckWakeNotification" object:nil];
-	if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Activator.plist"]) CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)LTOpenNotification, NULL, kNilOptions);
+	if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Activator.plist"]) {
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)ShutdownNotification, NULL, kNilOptions);
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorWake, (CFStringRef)WakeNotification, NULL, kNilOptions);
+	}
 
 }
 
@@ -390,23 +399,26 @@ void PuckActivatorShutdown() {
 - (void)receivePuckNotification:(NSNotification *)notification {
 
 	if ([notification.name isEqual:@"puckShutdownNotification"]) {
+		if (isPuckActive) return;
+		isPuckActive = YES;
 		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 		[springboard _simulateLockButtonPress];
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES];
 		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
 		if (deviceHasFlashlight && flashLightAvailable && !flashlight && (turnFlashlightOffSwitch || toggleFlashlightSwitch)) flashlight = [[%c(AVFlashlight) alloc] init];
 		if (turnFlashlightOffSwitch) [flashlight setFlashlightLevel:0 withError:nil];
-		isPuckActive = YES;
 
 		if (!allowMusicPlaybackSwitch) {
-			pid_t pid;
-			const char* args[] = {"killall", "mediaserverd", NULL};
-			posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const *)args, NULL);
+			NSTask* task = [[NSTask alloc] init];
+			[task setLaunchPath:@"/usr/bin/killall"];
+			[task setArguments:[NSArray arrayWithObjects:@"mediaserverd", nil]];
+			[task launch];
 		}
 	} else if ([notification.name isEqual:@"puckWakeNotification"]) {
+		if (!isPuckActive) return;
+		isPuckActive = NO;
 		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
 		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
-		isPuckActive = NO;
 		recentlyWoke = YES;
 		
 		if (!respringOnWakeSwitch) {
@@ -415,9 +427,10 @@ void PuckActivatorShutdown() {
 				[springboard _simulateHomeButtonPress];
 			});
 		} else {
-			pid_t pid;
-			const char* args[] = {"killall", "backboardd", NULL};
-			posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const *)args, NULL);
+			NSTask* task = [[NSTask alloc] init];
+			[task setLaunchPath:@"/usr/bin/killall"];
+			[task setArguments:[NSArray arrayWithObjects:@"backboardd", nil]];
+			[task launch];
 		}
 	}
 

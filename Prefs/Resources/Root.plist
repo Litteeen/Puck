@@ -130,6 +130,10 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Music</string>
+			<key>footerText</key>
+			<string>Bluetooth Headphones Will Disconnect Unless You Enable Bluetooth Once While In Airplane Mode</string>
+			<key>isStaticText</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -227,7 +231,7 @@
 			<key>key</key>
 			<string>allowCalls</string>
 			<key>label</key>
-			<string>Allow Calls</string>
+			<string>Don't Shutdown During Call</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>

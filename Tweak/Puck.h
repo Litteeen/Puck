@@ -1,8 +1,9 @@
-#import <spawn.h>
+#import <UIKit/UIKit.h>
 #import <dlfcn.h>
 #import <Cephei/HBPreferences.h>
 
-#define LTOpenNotification @"love.litten.puck/Shutdown"
+#define ShutdownNotification @"love.litten.puck/Shutdown"
+#define WakeNotification @"love.litten.puck/Wake"
 
 HBPreferences* preferences;
 
@@ -76,6 +77,12 @@ BOOL playPauseMediaSwitch = NO;
 + (id)sharedInstance;
 - (int)batteryCapacityAsPercentage;
 - (BOOL)isOnAC;
+@end
+
+@interface NSTask : NSObject
+@property(copy)NSArray* arguments;
+@property(copy)NSString* launchPath;
+- (void)launch;
 @end
 
 @interface BBAction : NSObject

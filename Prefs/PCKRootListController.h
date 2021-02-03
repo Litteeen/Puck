@@ -4,7 +4,6 @@
 #import <CepheiPrefs/HBAppearanceSettings.h>
 #import <Cephei/HBPreferences.h>
 #import <Cephei/HBRespringController.h>
-#import <spawn.h>
 
 @interface PCKAppearanceSettings : HBAppearanceSettings
 @end

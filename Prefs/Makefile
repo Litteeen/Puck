@@ -1,16 +1,11 @@
-ARCHS = arm64 arm64e
-TARGET = iphone:clang::13.5
-SYSROOT = $(THEOS)/sdks/iPhoneOS13.5.sdk
-
-include $(THEOS)/makefiles/common.mk
-
 BUNDLE_NAME = PuckPrefs
 $(BUNDLE_NAME)_FILES = $(wildcard *.m)
 $(BUNDLE_NAME)_INSTALL_PATH = /Library/PreferenceBundles
-$(BUNDLE_NAME)_FRAMEWORKS = UIKit
 $(BUNDLE_NAME)_PRIVATE_FRAMEWORKS = Preferences
 $(BUNDLE_NAME)_EXTRA_FRAMEWORKS = Cephei CepheiPrefs
+ADDITIONAL_CFLAGS += -DTHEOS_LEAN_AND_MEAN
 
+include $(THEOS)/makefiles/common.mk
 include $(THEOS_MAKE_PATH)/bundle.mk
 
 internal-stage::
