@@ -129,45 +129,6 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Music</string>
-			<key>footerText</key>
-			<string>Bluetooth Headphones Will Disconnect Unless You Enable Bluetooth Once While In Airplane Mode</string>
-			<key>isStaticText</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<true/>
-			<key>defaults</key>
-			<string>love.litten.puckpreferences</string>
-			<key>key</key>
-			<string>allowMusicPlayback</string>
-			<key>label</key>
-			<string>Allow Music Playback</string>
-			<key>PostNotification</key>
-			<string>love.litten.puckpreferences/ReloadPrefs</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<true/>
-			<key>defaults</key>
-			<string>love.litten.puckpreferences</string>
-			<key>key</key>
-			<string>allowVolumeChanges</string>
-			<key>label</key>
-			<string>Allow Volume Changes</string>
-			<key>PostNotification</key>
-			<string>love.litten.puckpreferences/ReloadPrefs</string>
-		</dict>
-
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
 			<string>Warning Notification</string>
 			<key>footerText</key>
 			<string>Doesn't Work While DND Is Enabled</string>
@@ -211,6 +172,66 @@
 			<true/>
 			<key>isSegmented</key>
 			<true/>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Apps</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>killAllApps</string>
+			<key>label</key>
+			<string>Kill All Apps</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
+		
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Music</string>
+			<key>footerText</key>
+			<string>Bluetooth Headphones Will Disconnect Unless You Enable Bluetooth Once While In Airplane Mode</string>
+			<key>isStaticText</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>allowMusicPlayback</string>
+			<key>label</key>
+			<string>Allow Music Playback</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>allowVolumeChanges</string>
+			<key>label</key>
+			<string>Allow Volume Changes</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>

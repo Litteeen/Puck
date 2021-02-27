@@ -9,6 +9,25 @@
                         <key>cell</key>
                         <string>PSGroupCell</string>
                         <key>label</key>
+                        <string>Killing All Apps</string>
+                </dict>
+                <dict>
+                        <key>cell</key>
+                        <string>PSButtonCell</string>
+                        <key>label</key>
+                        <string>@DaveWijk</string>
+                        <key>cellClass</key>
+                        <string>HBTwitterCell</string>
+                        <key>label</key>
+                        <string>Dave</string>
+                        <key>user</key>
+                        <string>DaveWijk</string>
+                </dict>
+                
+                <dict>
+                        <key>cell</key>
+                        <string>PSGroupCell</string>
+                        <key>label</key>
                         <string>Pretty Twitter Cells By</string>
                 </dict>
                 <dict>

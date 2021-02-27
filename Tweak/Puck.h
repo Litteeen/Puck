@@ -2,6 +2,7 @@
 #import <dlfcn.h>
 #import <Cephei/HBPreferences.h>
 
+#define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define ShutdownNotification @"love.litten.puck/Shutdown"
 #define WakeNotification @"love.litten.puck/Wake"
 
@@ -19,19 +20,22 @@ BOOL deviceHasFlashlight = NO;
 BOOL flashLightAvailable = NO;
 
 // behavior
-NSInteger shutdownPercentageValue = 7;
-NSInteger wakePercentageValue = 10;
+NSString* shutdownPercentageValue = @"7";
+NSString* wakePercentageValue = @"10";
 BOOL wakeWithVolumeButtonSwitch = YES;
 BOOL wakeWhenPluggedInSwitch = YES;
 BOOL respringOnWakeSwitch = NO;
 
+// warning notification
+BOOL warningNotificationSwitch = YES;
+NSString* warningPercentageValue = @"10";
+
+// apps
+BOOL killAllAppsSwitch = YES;
+
 // music
 BOOL allowMusicPlaybackSwitch = YES;
 BOOL allowVolumeChangesSwitch = YES;
-
-// warning notification
-BOOL warningNotificationSwitch = YES;
-NSInteger warningPercentageValue = 10;
 
 // calls
 BOOL allowCallsSwitch = YES;
@@ -61,6 +65,31 @@ BOOL playPauseMediaSwitch = NO;
 @interface _CDBatterySaver : NSObject
 + (id)sharedInstance;
 - (BOOL)setPowerMode:(long long)arg1 error:(id *)arg2;
+@end
+
+@interface DNDModeAssertionService : NSObject
++ (id)serviceForClientIdentifier:(id)arg1;
+- (id)takeModeAssertionWithDetails:(id)arg1 error:(id *)arg2;
+- (BOOL)invalidateAllActiveModeAssertionsWithError:(id *)arg1;
+@end
+
+@interface DNDModeAssertionDetails : NSObject
++ (id)userRequestedAssertionDetailsWithIdentifier:(id)arg1 modeIdentifier:(id)arg2 lifetime:(id)arg3;
+@end
+
+@interface SBDisplayItem: NSObject
+@property(nonatomic, copy, readonly)NSString* bundleIdentifier;
+@end
+
+@interface SBMainSwitcherViewController: UIViewController
++ (id)sharedInstance;
+- (id)recentAppLayouts;
+- (void)_deleteAppLayout:(id)arg1 forReason:(long long)arg2;
+- (void)_deleteAppLayoutsMatchingBundleIdentifier:(id)arg1;
+@end
+
+@interface SBAppLayout:NSObject
+- (id)allItems;
 @end
 
 @interface AVFlashlight : NSObject
