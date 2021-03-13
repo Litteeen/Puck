@@ -3,12 +3,10 @@
 #import <Cephei/HBPreferences.h>
 
 #define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-#define ShutdownNotification @"love.litten.puck/Shutdown"
-#define WakeNotification @"love.litten.puck/Wake"
 
-HBPreferences* preferences;
+HBPreferences* preferences = nil;
 
-extern BOOL enabled;
+BOOL enabled = NO;
 
 BOOL isPuckActive = NO;
 BOOL recentlyWoke = NO;
@@ -24,7 +22,7 @@ NSString* shutdownPercentageValue = @"7";
 NSString* wakePercentageValue = @"10";
 BOOL wakeWithVolumeButtonSwitch = YES;
 BOOL wakeWhenPluggedInSwitch = YES;
-BOOL respringOnWakeSwitch = NO;
+BOOL toggleWarningSwitch = NO;
 
 // warning notification
 BOOL warningNotificationSwitch = YES;
@@ -32,6 +30,7 @@ NSString* warningPercentageValue = @"10";
 
 // apps
 BOOL killAllAppsSwitch = YES;
+BOOL ignoreNowPlayingAppSwitch = NO;
 
 // music
 BOOL allowMusicPlaybackSwitch = YES;
@@ -55,6 +54,9 @@ BOOL playPauseMediaSwitch = NO;
 - (void)_simulateLockButtonPress;
 - (void)_simulateHomeButtonPress;
 - (void)receivePuckNotification:(NSNotification *)notification;
+- (void)puckShutdown;
+- (void)puckWake;
+- (void)puckLightWake;
 @end
 
 @interface SBAirplaneModeController : NSObject
@@ -77,19 +79,20 @@ BOOL playPauseMediaSwitch = NO;
 + (id)userRequestedAssertionDetailsWithIdentifier:(id)arg1 modeIdentifier:(id)arg2 lifetime:(id)arg3;
 @end
 
-@interface SBDisplayItem: NSObject
+@interface SBDisplayItem : NSObject
 @property(nonatomic, copy, readonly)NSString* bundleIdentifier;
 @end
 
-@interface SBMainSwitcherViewController: UIViewController
+@interface SBMainSwitcherViewController : UIViewController
 + (id)sharedInstance;
 - (id)recentAppLayouts;
 - (void)_deleteAppLayout:(id)arg1 forReason:(long long)arg2;
 - (void)_deleteAppLayoutsMatchingBundleIdentifier:(id)arg1;
 @end
 
-@interface SBAppLayout:NSObject
+@interface SBAppLayout : NSObject
 - (id)allItems;
+- (BOOL)containsItemWithBundleIdentifier:(id)arg1;
 @end
 
 @interface AVFlashlight : NSObject
@@ -97,9 +100,14 @@ BOOL playPauseMediaSwitch = NO;
 - (BOOL)setFlashlightLevel:(float)arg1 withError:(id *)arg2;
 @end
 
+@interface SBApplication : NSObject
+@property(nonatomic, readonly)NSString* bundleIdentifier;
+@end
+
 @interface SBMediaController : NSObject
 + (id)sharedInstance;
 - (BOOL)togglePlayPauseForEventSource:(long long)arg1;
+- (SBApplication *)nowPlayingApplication;
 @end
 
 @interface SBUIController : NSObject

@@ -26,7 +26,7 @@
 			<key>label</key>
 			<string>Behavior</string>
 			<key>footerText</key>
-			<string>Three Volume Up Presses Wake The Device</string>
+			<string>Three volume up presses wake the device</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>
@@ -34,7 +34,7 @@
 			<key>cell</key>
 			<string>PSStaticTextCell</string>
 			<key>label</key>
-			<string>Shutdown Percentage</string>
+			<string>Shutdown percentage</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -60,7 +60,7 @@
 			<key>cell</key>
 			<string>PSStaticTextCell</string>
 			<key>label</key>
-			<string>Wake Percentage</string>
+			<string>Wake percentage</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -92,7 +92,7 @@
 			<key>key</key>
 			<string>wakeWithVolumeButton</string>
 			<key>label</key>
-			<string>Wake With Volume Up Button</string>
+			<string>Wake with volume up button</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -106,7 +106,7 @@
 			<key>key</key>
 			<string>wakeWhenPluggedIn</string>
 			<key>label</key>
-			<string>Wake When Plugged In</string>
+			<string>Wake when plugged in</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -118,9 +118,9 @@
 			<key>defaults</key>
 			<string>love.litten.puckpreferences</string>
 			<key>key</key>
-			<string>respringOnWake</string>
+			<string>toggleWarning</string>
 			<key>label</key>
-			<string>Respring On Wake</string>
+			<string>Toggle warning</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -131,7 +131,7 @@
 			<key>label</key>
 			<string>Warning Notification</string>
 			<key>footerText</key>
-			<string>Doesn't Work While DND Is Enabled</string>
+			<string>Does not work while do not disturb is enabled</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>
@@ -145,7 +145,7 @@
 			<key>key</key>
 			<string>warningNotification</string>
 			<key>label</key>
-			<string>Show Warning Notification</string>
+			<string>Show warning notification</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -153,7 +153,7 @@
 			<key>cell</key>
 			<string>PSStaticTextCell</string>
 			<key>label</key>
-			<string>Notification Percentage</string>
+			<string>Notification percentage</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -192,7 +192,21 @@
 			<key>key</key>
 			<string>killAllApps</string>
 			<key>label</key>
-			<string>Kill All Apps</string>
+			<string>Kill all apps</string>
+			<key>PostNotification</key>
+			<string>love.litten.puckpreferences/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>love.litten.puckpreferences</string>
+			<key>key</key>
+			<string>ignoreNowPlayingApp</string>
+			<key>label</key>
+			<string>Ignore now playing app</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -203,7 +217,7 @@
 			<key>label</key>
 			<string>Music</string>
 			<key>footerText</key>
-			<string>Bluetooth Headphones Will Disconnect Unless You Enable Bluetooth Once While In Airplane Mode</string>
+			<string>Bluetooth headphones will disconnect, unless you enable bluetooth manually once while in airplane mode</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>
@@ -217,7 +231,7 @@
 			<key>key</key>
 			<string>allowMusicPlayback</string>
 			<key>label</key>
-			<string>Allow Music Playback</string>
+			<string>Allow music playback</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -231,7 +245,7 @@
 			<key>key</key>
 			<string>allowVolumeChanges</string>
 			<key>label</key>
-			<string>Allow Volume Changes</string>
+			<string>Allow volume changes</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -252,7 +266,7 @@
 			<key>key</key>
 			<string>allowCalls</string>
 			<key>label</key>
-			<string>Don't Shutdown During Call</string>
+			<string>Don't shutdown during a call</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -266,7 +280,7 @@
 			<key>key</key>
 			<string>shutdownAfterCallEnded</string>
 			<key>label</key>
-			<string>Shutdown After Call Ended</string>
+			<string>Shutdown after a call ended</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -287,7 +301,7 @@
 			<key>key</key>
 			<string>wakeWhenAlarmFires</string>
 			<key>label</key>
-			<string>Wake When Alarm Fires</string>
+			<string>Wake when alarm fires</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -308,7 +322,7 @@
 			<key>key</key>
 			<string>turnFlashlightOff</string>
 			<key>label</key>
-			<string>Turn Flashlight Off</string>
+			<string>Turn flashlight off</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -317,7 +331,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Volume Down Gestures</string>
+			<string>Volume down gestures</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -329,7 +343,7 @@
 			<key>key</key>
 			<string>toggleFlashlight</string>
 			<key>label</key>
-			<string>Toggle Flashlight</string>
+			<string>Toggle flashlight</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -343,7 +357,7 @@
 			<key>key</key>
 			<string>playPauseMedia</string>
 			<key>label</key>
-			<string>Play/Pause Media</string>
+			<string>Play/Pause media</string>
 			<key>PostNotification</key>
 			<string>love.litten.puckpreferences/ReloadPrefs</string>
 		</dict>
@@ -352,7 +366,15 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Other Options</string>
+			<string>Other options</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Activate</string>
+			<key>action</key>
+			<string>activate:</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -366,7 +388,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Reset Preferences</string>
+			<string>Reset preferences</string>
 			<key>action</key>
 			<string>resetPrompt</string>
 		</dict>
@@ -392,7 +414,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>You Might Like:</string>
+			<string>You might like:</string>
 		</dict>
 		<dict>
 			<key>cellClass</key>
@@ -423,7 +445,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-			<string>Puck By Litten, Icon And Banner By taki</string>
+			<string>Puck by Litten, icon and banner by taki</string>
 			<key>isStaticText</key>
 			<true/>
 		</dict>
@@ -441,7 +463,7 @@
 			<key>cellClass</key>
 			<string>HBLinkTableCell</string>
 			<key>label</key>
-			<string>Source Code</string>
+			<string>Source code</string>
 			<key>subtitle</key>
 			<string>GitHub 🔮</string>
 			<key>url</key>
@@ -451,7 +473,7 @@
 			<key>cellClass</key>
 			<string>HBLinkTableCell</string>
 			<key>label</key>
-			<string>Donate To Litten</string>
+			<string>Donate to Litten</string>
 			<key>subtitle</key>
 			<string>Appreciated 💝</string>
 			<key>url</key>

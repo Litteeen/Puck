@@ -1,8 +1,7 @@
 #import "Puck.h"
 
-BOOL enabled;
-
-AVFlashlight* flashlight;
+AVFlashlight* flashlight = nil;
+SBApplication* nowPlayingApp = nil;
 
 // warning notification
 static BBServer* bbServer = nil;
@@ -62,9 +61,15 @@ static void fakeNotification(NSString *sectionID, NSDate *date, NSString *messag
 
 }
 
-void PCKWarningNotification() {
+void PuckWarningNotification() {
 
     fakeNotification(@"com.apple.Preferences", [NSDate date], @"Your device will be shut down soon", true);
+
+}
+
+void PuckPreferencesShutdown() {
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
 
 }
 
@@ -298,7 +303,7 @@ void PuckActivatorWake() {
 		isInCall = NO;
 
 	if (status == 6 && shutdownAfterCallEndedSwitch && [[%c(SBUIController) sharedInstance] batteryCapacityAsPercentage] <= [shutdownPercentageValue intValue] && !isPuckActive)
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckForceShutdownNotification" object:nil];
 
 	return status;
 
@@ -319,13 +324,13 @@ void PuckActivatorWake() {
 		recentlyWarned = NO;
 
 	if ([self batteryCapacityAsPercentage] == [shutdownPercentageValue intValue] && ![self isOnAC] && !recentlyWoke && !isInCall && !isPuckActive)
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckShutdownNotification" object:nil];
+		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckForceShutdownNotification" object:nil];
 
 	if ([self batteryCapacityAsPercentage] == [wakePercentageValue intValue] && [self isOnAC] && isPuckActive)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
 
 	if (warningNotificationSwitch && [self batteryCapacityAsPercentage] == [warningPercentageValue intValue] && ![self isOnAC] && !recentlyWarned && !isInCall && !isPuckActive) {
-		PCKWarningNotification();
+		PuckWarningNotification();
 		recentlyWarned = YES;
 	}
 
@@ -335,8 +340,7 @@ void PuckActivatorWake() {
 
 	%orig;
 
-	if (wakeWhenPluggedInSwitch && [self isOnAC] && isPuckActive)
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
+	if (wakeWhenPluggedInSwitch && [self isOnAC] && isPuckActive) [[NSNotificationCenter defaultCenter] postNotificationName:@"puckWakeNotification" object:nil];
 
 }
 
@@ -376,6 +380,18 @@ void PuckActivatorWake() {
 
 %end
 
+%hook SBMediaController
+
+- (void)_setNowPlayingApplication:(id)arg1 { // get the current playing app
+
+	%orig;
+
+	nowPlayingApp = arg1;
+
+}
+
+%end
+
 %hook SpringBoard
 
 - (void)applicationDidFinishLaunching:(id)arg1 { // register puck notifications
@@ -384,10 +400,11 @@ void PuckActivatorWake() {
 
 	recentlyWoke = YES;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckShutdownNotification" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckForceShutdownNotification" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivePuckNotification:) name:@"puckWakeNotification" object:nil];
 	if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Activator.plist"]) {
-		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)ShutdownNotification, NULL, kNilOptions);
-		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorWake, (CFStringRef)WakeNotification, NULL, kNilOptions);
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)@"love.litten.puck/Shutdown", NULL, kNilOptions);
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorWake, (CFStringRef)@"love.litten.puck/Wake", NULL, kNilOptions);
 	}
 
 }
@@ -398,103 +415,134 @@ void PuckActivatorWake() {
 	if ([notification.name isEqual:@"puckShutdownNotification"]) {
 		if (isPuckActive) return;
 
-		// lock device
-		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
-		[springboard _simulateLockButtonPress];
+		// confirmation alert
+		if (toggleWarningSwitch) {
+			UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Puck" message:@"This will put your device into Puck mode" preferredStyle:UIAlertControllerStyleActionSheet];
+	
+			UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Yep" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+				[self puckShutdown];
+			}];
 
-		// enable airplane mode
-		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES];
+			UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
 
-		// enable low power mode
-		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
+			[alertController addAction:confirmAction];
+			[alertController addAction:cancelAction];
 
-		// enable do not disturb
-		DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
-		DNDModeAssertionDetails* newAssertion = [objc_getClass("DNDModeAssertionDetails") userRequestedAssertionDetailsWithIdentifier:@"com.apple.control-center.manual-toggle" modeIdentifier:@"com.apple.donotdisturb.mode.default" lifetime:nil];
-		[assertionService takeModeAssertionWithDetails:newAssertion error:NULL];
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
-
-		// turn flashlight off
-		if (deviceHasFlashlight && flashLightAvailable && !flashlight && (turnFlashlightOffSwitch || toggleFlashlightSwitch)) flashlight = [[%c(AVFlashlight) alloc] init];
-		if (turnFlashlightOffSwitch) [flashlight setFlashlightLevel:0 withError:nil];
-
-		// kill all apps
-		if (killAllAppsSwitch) {
-			SBMainSwitcherViewController* mainSwitcher = [%c(SBMainSwitcherViewController) sharedInstance];
-			NSArray* items = [mainSwitcher recentAppLayouts];
-			if (!SYSTEM_VERSION_LESS_THAN(@"14")) {
-				for (SBAppLayout* item in items) {
-					NSArray* arr = [item allItems];
-					SBDisplayItem* displayItem = arr[0];
-					NSString* bundleID = [displayItem bundleIdentifier];
-					[mainSwitcher _deleteAppLayoutsMatchingBundleIdentifier:bundleID];
-				}
-			} else if (SYSTEM_VERSION_LESS_THAN(@"14")) {
-				for (SBAppLayout* item in items)
-					[mainSwitcher _deleteAppLayout:item forReason:1];
-			}
+			[[[self keyWindow] rootViewController] presentViewController:alertController animated:YES completion:nil];
 		}
-
-		// stop music
-		if (!allowMusicPlaybackSwitch && !killAllAppsSwitch) {
-			NSTask* task = [[NSTask alloc] init];
-			[task setLaunchPath:@"/usr/bin/killall"];
-			[task setArguments:[NSArray arrayWithObjects:@"mediaserverd", nil]];
-			[task launch];
-		}
-
-		isPuckActive = YES;
-		recentlyWoke = NO;
-		recentlyWarned = NO;
+	} else if ([notification.name isEqual:@"puckForceShutdownNotification"]) {
+		if (isPuckActive) return;
+		[self puckShutdown];
 	} else if ([notification.name isEqual:@"puckWakeNotification"]) {
 		if (!isPuckActive) return;
-
-		// disable airplane mode
-		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
-
-		// disable low power mode
-		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
-
-		// disable do not disturb
-		DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
-		[assertionService invalidateAllActiveModeAssertionsWithError:NULL];
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
-
-		// wake
-		if (!respringOnWakeSwitch) {
-			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-				SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
-				[springboard _simulateHomeButtonPress];
-			});
-		} else {
-			NSTask* task = [[NSTask alloc] init];
-			[task setLaunchPath:@"/usr/bin/killall"];
-			[task setArguments:[NSArray arrayWithObjects:@"backboardd", nil]];
-			[task launch];
-		}
-
-		isPuckActive = NO;
-		recentlyWoke = YES;
-		recentlyWarned = NO;
+		[self puckWake];
 	} else if ([notification.name isEqual:@"puckLightWakeNotification"]) {
 		if (!isPuckActive) return;
-
-		// disable airplane mode
-		[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
-
-		// disable low power mode
-		[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
-
-		// disable do not disturb
-		DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
-		[assertionService invalidateAllActiveModeAssertionsWithError:NULL];
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
-
-		isPuckActive = NO;
-		recentlyWoke = YES;
-		recentlyWarned = NO;
+		[self puckLightWake];
 	}
 
+}
+
+%new
+- (void)puckShutdown { // shutdown
+
+	// lock device
+	SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
+	[springboard _simulateLockButtonPress];
+
+	// enable airplane mode
+	[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:YES];
+
+	// enable low power mode
+	[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
+
+	// enable do not disturb
+	DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
+	DNDModeAssertionDetails* newAssertion = [objc_getClass("DNDModeAssertionDetails") userRequestedAssertionDetailsWithIdentifier:@"com.apple.control-center.manual-toggle" modeIdentifier:@"com.apple.donotdisturb.mode.default" lifetime:nil];
+	[assertionService takeModeAssertionWithDetails:newAssertion error:NULL];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
+
+	// turn flashlight off
+	if (deviceHasFlashlight && flashLightAvailable && !flashlight && (turnFlashlightOffSwitch || toggleFlashlightSwitch)) flashlight = [[%c(AVFlashlight) alloc] init];
+	if (turnFlashlightOffSwitch) [flashlight setFlashlightLevel:0 withError:nil];
+
+	// kill all apps
+	if (killAllAppsSwitch) {
+		SBMainSwitcherViewController* mainSwitcher = [%c(SBMainSwitcherViewController) sharedInstance];
+		NSArray* items = [mainSwitcher recentAppLayouts];
+		if (!SYSTEM_VERSION_LESS_THAN(@"14")) {
+			for (SBAppLayout* item in items) {
+				NSArray* arr = [item allItems];
+				SBDisplayItem* displayItem = arr[0];
+				NSString* bundleID = [displayItem bundleIdentifier];
+				if (ignoreNowPlayingAppSwitch && ![bundleID isEqualToString:[nowPlayingApp bundleIdentifier]]) [mainSwitcher _deleteAppLayoutsMatchingBundleIdentifier:bundleID];
+				else if (!ignoreNowPlayingAppSwitch) [mainSwitcher _deleteAppLayoutsMatchingBundleIdentifier:bundleID];
+			}
+		} else if (SYSTEM_VERSION_LESS_THAN(@"14")) {
+			for (SBAppLayout* item in items)
+				if (ignoreNowPlayingAppSwitch && ![item containsItemWithBundleIdentifier:[nowPlayingApp bundleIdentifier]]) [mainSwitcher _deleteAppLayout:item forReason:1];
+				else if (!ignoreNowPlayingAppSwitch) [mainSwitcher _deleteAppLayout:item forReason:1];
+		}
+	}
+
+	// stop music
+	if (!allowMusicPlaybackSwitch && !killAllAppsSwitch) {
+		NSTask* task = [[NSTask alloc] init];
+		[task setLaunchPath:@"/usr/bin/killall"];
+		[task setArguments:[NSArray arrayWithObjects:@"mediaserverd", nil]];
+		[task launch];
+	}
+
+	isPuckActive = YES;
+	recentlyWoke = NO;
+	recentlyWarned = NO;
+
+}
+
+%new
+- (void)puckWake { // normal wake
+
+	// disable airplane mode
+	[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
+
+	// disable low power mode
+	[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
+
+	// disable do not disturb
+	DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
+	[assertionService invalidateAllActiveModeAssertionsWithError:NULL];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
+
+	// wake
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
+		[springboard _simulateHomeButtonPress];
+	});
+
+	isPuckActive = NO;
+	recentlyWoke = YES;
+	recentlyWarned = NO;
+
+}
+
+%new
+- (void)puckLightWake { // light wake
+
+	// disable airplane mode
+	[[%c(SBAirplaneModeController) sharedInstance] setInAirplaneMode:NO];
+
+	// disable low power mode
+	[[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
+
+	// disable do not disturb
+	DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
+	[assertionService invalidateAllActiveModeAssertionsWithError:NULL];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
+
+	isPuckActive = NO;
+	recentlyWoke = YES;
+	recentlyWarned = NO;
+	
 }
 
 %end
@@ -538,13 +586,14 @@ void PuckActivatorWake() {
 	preferences = [[HBPreferences alloc] initWithIdentifier:@"love.litten.puckpreferences"];
 
 	[preferences registerBool:&enabled default:NO forKey:@"Enabled"];
+	if (!enabled) return;
 
 	// behavior
 	[preferences registerObject:&shutdownPercentageValue default:@"7" forKey:@"shutdownPercentage"];
 	[preferences registerObject:&wakePercentageValue default:@"10" forKey:@"wakePercentage"];
 	[preferences registerBool:&wakeWithVolumeButtonSwitch default:YES forKey:@"wakeWithVolumeButton"];
 	[preferences registerBool:&wakeWhenPluggedInSwitch default:YES forKey:@"wakeWhenPluggedIn"];
-	[preferences registerBool:&respringOnWakeSwitch default:NO forKey:@"respringOnWake"];
+	[preferences registerBool:&toggleWarningSwitch default:NO forKey:@"toggleWarning"];
 
 	// warning notification
 	[preferences registerBool:&warningNotificationSwitch default:YES forKey:@"warningNotification"];
@@ -552,6 +601,7 @@ void PuckActivatorWake() {
 
 	// apps
 	[preferences registerBool:&killAllAppsSwitch default:YES forKey:@"killAllApps"];
+	[preferences registerBool:&ignoreNowPlayingAppSwitch default:NO forKey:@"ignoreNowPlayingApp"];
 
 	// music
 	[preferences registerBool:&allowMusicPlaybackSwitch default:YES forKey:@"allowMusicPlayback"];
@@ -571,9 +621,8 @@ void PuckActivatorWake() {
 	[preferences registerBool:&toggleFlashlightSwitch default:NO forKey:@"toggleFlashlight"];
 	[preferences registerBool:&playPauseMediaSwitch default:NO forKey:@"playPauseMedia"];
 
-	if (enabled) {
-		%init(Puck);
-		if (warningNotificationSwitch) %init(WarningNotification);
-	}
+	%init(Puck);
+	if (warningNotificationSwitch) %init(WarningNotification);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)PuckActivatorShutdown, (CFStringRef)@"love.litten.puck/PreferencesShutdown", NULL, (CFNotificationSuspensionBehavior)kNilOptions);
 	
 }

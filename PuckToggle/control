@@ -4,6 +4,6 @@ Depends: mobilesubstrate
 Version: 1.0
 Architecture: iphoneos-arm
 Description: Control center toggle for puck
-Maintainer: alexandra
-Author: alexandra
+Maintainer: Litten
+Author: Litten
 Section: Control Center (Modules)

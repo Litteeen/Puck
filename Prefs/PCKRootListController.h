@@ -8,18 +8,21 @@
 @interface PCKAppearanceSettings : HBAppearanceSettings
 @end
 
-@interface PCKRootListController : HBRootListController {
-    UITableView * _table;
-}
+@interface PCKRootListController : HBRootListController
+@property(nonatomic, retain)PCKAppearanceSettings* appearanceSettings;
+@property(nonatomic, retain)HBPreferences* preferences;
 @property(nonatomic, retain)UISwitch* enableSwitch;
-@property (nonatomic, retain) UIView *headerView;
-@property (nonatomic, retain) UIImageView *headerImageView;
-@property (nonatomic, retain) UILabel *titleLabel;
-@property (nonatomic, retain) UIImageView *iconView;
-- (void)toggleState;
-- (void)setEnableSwitchState;
+@property(nonatomic, retain)UIBarButtonItem* item;
+@property(nonatomic, retain)UIView* headerView;
+@property(nonatomic, retain)UIImageView* headerImageView;
+@property(nonatomic, retain)UILabel* titleLabel;
+@property(nonatomic, retain)UIImageView* iconView;
+@property(nonatomic, retain)UIBlurEffect* blur;
+@property(nonatomic, retain)UIVisualEffectView* blurView;
+- (void)setEnabled;
+- (void)setEnabledState;
 - (void)resetPrompt;
 - (void)resetPreferences;
 - (void)respring;
-- (void)respringUtil;
+- (void)activate:(id)sender;
 @end
